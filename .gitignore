@@ -1,0 +1,8 @@
+.venv
+.idea
+*.iml
+__pycache__
+build
+*.egg-info
+dist
+*.sqlite3
