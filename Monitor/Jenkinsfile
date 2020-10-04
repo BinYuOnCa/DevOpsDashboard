@@ -51,10 +51,10 @@ pipeline {
         
         stage('Get code from Github') {
             steps {
-                script{     // 等效于 echo
-                  println('Get code from Github')
+                script{     // Java script
+                  println('Get code from Github')   // println 等效于 echo
                 }
-                echo 
+
                 git credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
                 shell("ls ${workspace}")
             }
