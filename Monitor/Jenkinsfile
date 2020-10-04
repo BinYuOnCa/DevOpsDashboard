@@ -19,8 +19,8 @@ pipeline {
      * 自定义环境变量
      */
     environment {
-        DISABLE_AUTH = 'true'
-        DB_ENGINE    = 'sqlite'
+        GIT_URL       = 'git@github.com:jeffwji/DevOpsDashboard.git'
+        CREDENTIAL    = 'Github'
     }
 
     /**
@@ -32,23 +32,24 @@ pipeline {
          */
         stage('Clear up workspace') {
             steps {
-                echo "Delete workspace: ${workspace}"
-                dir("${workspace}") {
-                    deleteDir()         // 删除当前的缓存
-                }
-                dir("${workspace}@tmp") {
-                    deleteDir()         // 删除当前的缓存
-                }
-
                 // 打印环境变量
                 sh 'printenv'
+
+                // 清理缓存缓存
+                echo "Delete workspace: ${workspace}"
+                dir("${workspace}") {
+                    deleteDir()
+                }
+                dir("${workspace}@tmp") {
+                    deleteDir()
+                }
             }
         }
         
         stage('Get code from Github') {
             steps {
                 echo 'Get code from Github'
-                git credentialsId: 'Github', url: 'git@github.com:jeffwji/DevOpsDashboard.git'
+                git credentialsId: '${CREDENTIAL}', url: '${GIT_URL}'
                 shell("ls ${workspace}")
             }
         }
