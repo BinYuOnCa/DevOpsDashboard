@@ -49,7 +49,7 @@ pipeline {
         stage('Get code from Github') {
             steps {
                 echo 'Get code from Github'
-                git credentialsId: ${env.CREDENTIAL}, url: ${env.GIT_URL}   // 使用 env 名称空间下的环境变量
+                git credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
                 shell("ls ${workspace}")
             }
         }
