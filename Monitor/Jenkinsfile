@@ -1,3 +1,5 @@
+#！groovy
+
 
 pipeline {
     /**
@@ -36,7 +38,7 @@ pipeline {
                 sh 'printenv'
 
                 // 清理缓存缓存
-                echo "Delete workspace: ${workspace}"
+                echo ‘Delete workspace: ${workspace}‘
                 dir("${workspace}") {
                     deleteDir()
                 }
@@ -49,7 +51,7 @@ pipeline {
         stage('Get code from Github') {
             steps {
                 echo 'Get code from Github'
-                git credentialsId: env.CREDENTIAL, url: env.GIT_URL
+                git credentialsId: ${env.CREDENTIAL}, url: ${env.GIT_URL}   // 使用 env 名称空间下的环境变量
                 shell("ls ${workspace}")
             }
         }
@@ -92,15 +94,15 @@ pipeline {
 
         // 条件执行
         success {
-            echo currentBuild.description + ": Success"
+            echo currentBuild.description = "Success"    // currentBuild.description 会将信息带回控制面板
         }
 
         failure{
-            echo  currentBuild.description + ": Failure"
+            echo  currentBuild.description = "Failure"
         }
 
         aborted{
-            echo currentBuild.description + ": Aborted"
+            echo currentBuild.description = "Aborted"
         }
     }
 }
