@@ -36,7 +36,7 @@ pipeline {
                 sh 'printenv'
 
                 // 清理缓存缓存
-                echo ‘Delete workspace ${workspace}‘
+                echo "Delete workspace ${workspace}"
                 dir("${workspace}") {
                     deleteDir()
                 }
