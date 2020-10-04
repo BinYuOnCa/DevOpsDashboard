@@ -56,7 +56,7 @@ pipeline {
                   println('Get code from Github')   // println 等效于 echo
                 }
 
-                git branch: '${env.BRANCH}', credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
+                git branch: "${env.BRANCH}", credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
                 shell("ls ${workspace}")
             }
         }
