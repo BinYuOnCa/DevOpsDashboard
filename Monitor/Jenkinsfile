@@ -62,7 +62,8 @@ pipeline {
 
         stage('Testing') {
             steps {
-                echo 'Scanning source code'
+                echo 'Run test cases'
+                sh 'python setup.py test'
             }
         }
 
