@@ -68,8 +68,10 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Builing'
-                sh 'python setup.py egg_info -bDEV bdist_wheel'
+                echo 'Build Monitor'
+                dir('Monitor') {
+                    sh 'python setup.py egg_info -bDEV bdist_wheel'
+                }
             }
         }
 
