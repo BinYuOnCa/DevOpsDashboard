@@ -49,7 +49,7 @@ pipeline {
         stage('Get code from Github') {
             steps {
                 echo 'Get code from Github'
-                git credentialsId: '${CREDENTIAL}', url: '${GIT_URL}'
+                git credentialsId: env.CREDENTIAL, url: env.GIT_URL
                 shell("ls ${workspace}")
             }
         }
