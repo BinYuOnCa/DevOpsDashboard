@@ -16,8 +16,12 @@ pipeline {
     }
 
     /**
-     *
+     * 自定义环境变量
      */
+    environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'sqlite'
+    }
 
     /**
      * 编译过程由多个 Stage(阶段)构成.
@@ -34,6 +38,11 @@ pipeline {
                 }
                 dir("${workspace}@tmp") {
                     deleteDir()         // 删除当前的缓存
+                }
+
+                // 打印环境变量
+                steps {
+                    sh 'printenv'
                 }
             }
         }
@@ -70,6 +79,29 @@ pipeline {
             steps {
                 echo 'Hello World'
             }
+        }
+    }
+
+    /**
+     * 构建后行为
+     */
+    post{
+        // 总是执行
+        always{
+            echo "Always"
+        }
+
+        // 条件执行
+        success {
+            echo currentBuild.description + ": Success"
+        }
+
+        failure{
+            echo  currentBuild.description + ": Failure"
+        }
+
+        aborted{
+            echo currentBuild.description + ": Aborted"
         }
     }
 }
