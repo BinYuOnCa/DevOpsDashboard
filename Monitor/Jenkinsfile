@@ -1,4 +1,6 @@
 
+
+
 pipeline {
     /**
      * Jenkins 选项和运行时选项
@@ -37,6 +39,7 @@ pipeline {
 
                 // 清理缓存缓存
                 echo "Delete workspace ${workspace}"
+
                 dir("${workspace}") {
                     deleteDir()
                 }
@@ -48,7 +51,10 @@ pipeline {
         
         stage('Get code from Github') {
             steps {
-                echo 'Get code from Github'
+                script{     // 等效于 echo
+                  println('Get code from Github')
+                }
+                echo 
                 git credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
                 shell("ls ${workspace}")
             }
@@ -56,27 +62,26 @@ pipeline {
 
         stage('Soruce code scan') {
             steps {
-                echo 'Hello World'
+                echo 'Scanning source code'
             }
         }
 
         stage('Build') {
             steps {
-                script{     // 等效于 echo
-                  println("Build")
-                }
+                echo 'Builing'
+                sh 'python setup.py egg_info -bDEV bdist_wheel'
             }
         }
 
         stage('Binary Scan') {
             steps {
-                echo 'Hello World'
+                echo 'Binary scan'
             }
         }
 
         stage('Pushing to Repository') {
             steps {
-                echo 'Hello World'
+                echo 'Pushing to repository'
             }
         }
     }
