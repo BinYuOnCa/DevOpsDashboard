@@ -60,7 +60,7 @@ pipeline {
             }
         }
 
-        stage('Soruce code scan') {
+        stage('Testing') {
             steps {
                 echo 'Scanning source code'
             }
