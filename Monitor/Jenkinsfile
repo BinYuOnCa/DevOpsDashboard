@@ -63,7 +63,9 @@ pipeline {
         stage('Testing') {
             steps {
                 echo 'Run test cases'
-                sh 'python setup.py test'
+                dir("${workspace}/Monitor") {
+                    sh 'python setup.py test'
+                }
             }
         }
 
