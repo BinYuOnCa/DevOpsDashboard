@@ -41,9 +41,7 @@ pipeline {
                 }
 
                 // 打印环境变量
-                step {
-                    sh 'printenv'
-                }
+                sh 'printenv'
             }
         }
         
