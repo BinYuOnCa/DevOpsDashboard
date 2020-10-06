@@ -4,8 +4,7 @@
 Example of how to use setuptools
 """
 
-from __init__ import __version__                    # 1) 从 submodule1.__init__.__version__ 获得版本号
-# __version__ = "1.0.0"                               # 2) 或直接在本地定义 version
+__version__ = "1.0.0"
 
 from setuptools import setup, find_packages
 
