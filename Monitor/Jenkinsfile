@@ -70,6 +70,17 @@ pipeline {
             }
         }
 
+        /**/
+        stage('Sonar scan') {
+            steps {
+                script {scannerHome=tool 'SonarQubeScanner'}
+                withSonarQubeEnv('SonarQube-Dev') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+        /**/
+
         stage('Build') {
             steps {
                 echo 'Build Monitor'
