@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Example of how to use setuptools
 """
@@ -20,6 +22,14 @@ def long_description():
 def get_depends():
     with open('requirements.txt') as f:
         return f.read().splitlines()
+
+# 使用 unittest 测试框架
+import unittest
+def get_test_suite():
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover('tests', pattern='test_*.py')
+    return test_suite
+
 
 # 可以在安装前检查依赖的版本，并自动升级到最新版(依赖必须发布到 pipy 中，否则会因为无法找到而出错)：
 # autoupgrade 0.2.0 之后才支持 master, 需要手工安装：pip install https://bitbucket.org/jorkar/autoupgrade/get/master.tar.gz --trusted-host=bitbucket.org
@@ -95,4 +105,7 @@ setup(
     #
 
     install_requires=get_depends(),
+
+    #
+    test_suite='setup.get_test_suite',
 )
