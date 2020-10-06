@@ -7,4 +7,3 @@ class GithubTestCases(unittest.IsolatedAsyncioTestCase):
         commits = await github.get_commits('zio', 'zio')
         print(len(commits))
         self.assertTrue(len(commits) == 30)
-
