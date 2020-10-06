@@ -61,16 +61,28 @@ pipeline {
             }
         }
 
-        stage('Testing') {
+        stage('Install testing dependency') {
             steps {
-                echo 'Run test cases'
+                echo 'Install testing dependency'
                 dir("${workspace}/Monitor") {
-                    sh 'python setup.py test'
+                    sh 'python -m pip install wheel nose coverage nosexcover pylint'
+                    sh 'python -m pip install -r requirements.txt'
                 }
             }
         }
 
-        /**/
+        stage('Testing') {
+            steps {
+                echo 'Run test cases'
+                dir("${workspace}/Monitor") {
+                    // sh 'python setup.py test'
+                    sh 'nosetests -sv --with-xunit --xunit-file=nosetests.xml --with-xcoverage --xcoverage-file=coverage.xml'
+                }
+            }
+        }
+
+
+        /*
         stage('Sonar scan') {
             steps {
                 script {scannerHome=tool 'SonarQubeScanner'}
@@ -79,7 +91,7 @@ pipeline {
                 }
             }
         }
-        /**/
+        */
 
         stage('Build') {
             steps {
