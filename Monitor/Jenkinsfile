@@ -49,7 +49,10 @@ pipeline {
                 }
             }
         }
-        
+
+        /**
+         * Dload source code
+         */
         stage('Get code from Github') {
             steps {
                 script{     // Java script
@@ -61,6 +64,9 @@ pipeline {
             }
         }
 
+        /**
+         * Install dependency for coverage and unittest(nosetests) and language checking
+         */
         stage('Install testing dependency') {
             steps {
                 echo 'Install testing dependency'
@@ -71,6 +77,9 @@ pipeline {
             }
         }
 
+        /**
+         * Run coverage or regular unit test
+         */
         stage('Testing') {
             steps {
                 echo 'Run test cases'
@@ -82,7 +91,10 @@ pipeline {
         }
 
 
-        /*
+        /**
+         * Call SonarQube scanner
+         * It will load in coverage and other reports generated from previous step.
+         *
         stage('Sonar scan') {
             steps {
                 script {scannerHome=tool 'SonarQubeScanner'}
@@ -93,6 +105,9 @@ pipeline {
         }
         */
 
+        /**
+         * Package
+         */
         stage('Build') {
             steps {
                 echo 'Build Monitor'
@@ -102,12 +117,18 @@ pipeline {
             }
         }
 
+        /**
+         * Binary scan if existing(For example: Acqu scan)
+         */
         stage('Binary Scan') {
             steps {
                 echo 'Binary scan'
             }
         }
 
+        /**
+         * Pushing to Nexus
+         */
         stage('Pushing to Repository') {
             steps {
                 echo 'Pushing to repository'
