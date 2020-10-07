@@ -102,16 +102,28 @@ pipeline {
         /**
          * Call SonarQube scanner
          * It will load in coverage and other reports generated from previous step.
-         *
+         */
         stage('Sonar scan') {
             steps {
-                script {scannerHome=tool 'SonarQubeScanner'}
-                withSonarQubeEnv('SonarQube-Dev') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                script {scannerHome=tool 'SonarQube Scanner'}    // name is defined in `Global Tool Configuration`
+                withSonarQubeEnv('MySonarQube') {                // name is defined in `Configure System`
+                    sh "${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=TestProject \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.language=py \
+                        -Dsonar.sourceEncoding=UTF-8 \
+                        -Dsonar.python.xunit.reportPath=nosetests.xml \
+                        -Dsonar.python.coverage.reportPaths=coverage.xml \
+                        -Dsonar.python.pylint=/usr/local/bin/pylint \
+                        -Dsonar.python.pylint_config=.pylintrc \
+                        -Dsonar.python.pylint.reportPath=pylint-report.txt"
+                }
+
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
-        */
 
         /**
          * Package
