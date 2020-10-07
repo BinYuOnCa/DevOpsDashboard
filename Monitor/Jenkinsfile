@@ -49,20 +49,30 @@ pipeline {
                 }
             }
         }
-        
+
+        /**
+         * Dload source code
+         */
         stage('Get code from Github') {
             steps {
                 script{     // Java script
                   println('Get code from Github')   // println 等效于 echo
                 }
-
                 git branch: "${env.BRANCH}", credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
-                shell("ls ${workspace}")
             }
         }
 
+        /**
+         * Install dependency for coverage and unittest(nosetests) and language checking
+         */
         stage('Install testing dependency') {
             steps {
+                echo 'Initial virtual environment'
+                dir("${workspace}") {
+                    sh "python3 -m venv .venv"
+                    sh ". .venv/bin/activate")
+                }
+
                 echo 'Install testing dependency'
                 dir("${workspace}/Monitor") {
                     sh 'python -m pip install wheel nose coverage nosexcover pylint'
@@ -71,6 +81,9 @@ pipeline {
             }
         }
 
+        /**
+         * Run coverage or regular unit test
+         */
         stage('Testing') {
             steps {
                 echo 'Run test cases'
@@ -82,7 +95,10 @@ pipeline {
         }
 
 
-        /*
+        /**
+         * Call SonarQube scanner
+         * It will load in coverage and other reports generated from previous step.
+         *
         stage('Sonar scan') {
             steps {
                 script {scannerHome=tool 'SonarQubeScanner'}
@@ -93,6 +109,9 @@ pipeline {
         }
         */
 
+        /**
+         * Package
+         */
         stage('Build') {
             steps {
                 echo 'Build Monitor'
@@ -102,12 +121,18 @@ pipeline {
             }
         }
 
+        /**
+         * Binary scan if existing(For example: Acqu scan)
+         */
         stage('Binary Scan') {
             steps {
                 echo 'Binary scan'
             }
         }
 
+        /**
+         * Pushing to Nexus
+         */
         stage('Pushing to Repository') {
             steps {
                 echo 'Pushing to repository'
