@@ -70,7 +70,7 @@ pipeline {
                 echo 'Initial virtual environment'
                 dir("${workspace}") {
                     sh "python3 -m venv .venv"
-                    sh ". .venv/bin/activate")
+                    sh ". .venv/bin/activate"
                 }
 
                 echo 'Install testing dependency'
