@@ -113,6 +113,8 @@ pipeline {
                                 -Dsonar.projectKey=TestProject \
                                 -Dsonar.projectVersion=1.0 \
                                 -Dsonar.language=py \
+                                -Dsonar.tests=./tests \
+                                -Dsonar.exclusions=setup.py,**/__init__.py \
                                 -Dsonar.sourceEncoding=UTF-8 \
                                 -Dsonar.python.xunit.reportPath=nosetests.xml \
                                 -Dsonar.python.coverage.reportPaths=coverage.xml \
