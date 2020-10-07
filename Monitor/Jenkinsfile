@@ -89,9 +89,11 @@ pipeline {
         stage('Testing') {
             steps {
                 echo 'Run test cases'
-                dir("${workspace}/Monitor") {
-                    // sh 'python setup.py test'
-                    sh 'nosetests -sv --with-xunit --xunit-file=nosetests.xml --with-xcoverage --xcoverage-file=coverage.xml'
+                withPythonEnv("${workspace}/.venv/bin/"){
+                    dir("${workspace}/Monitor") {
+                        // sh 'python setup.py test'
+                        sh 'nosetests -sv --with-xunit --xunit-file=nosetests.xml --with-xcoverage --xcoverage-file=coverage.xml'
+                    }
                 }
             }
         }
@@ -117,8 +119,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Build Monitor'
-                dir("${workspace}/Monitor") {
-                    sh 'python setup.py egg_info -bDEV bdist_wheel'
+                withPythonEnv("${workspace}/.venv/bin/"){
+                    dir("${workspace}/Monitor") {
+                        sh 'python setup.py egg_info -bDEV bdist_wheel'
+                    }
                 }
             }
         }
