@@ -58,11 +58,7 @@ pipeline {
                 script{     // Java script
                   println('Get code from Github')   // println 等效于 echo
                 }
-
                 git branch: "${env.BRANCH}", credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
-                dir("${workspace}/Monitor") {
-                    shell("python3 -m venv .venv; . .venv/bin/activate")
-                }
             }
         }
 
@@ -71,6 +67,12 @@ pipeline {
          */
         stage('Install testing dependency') {
             steps {
+                echo 'Initial virtual environment'
+                dir("${workspace}") {
+                    sh "python3 -m venv .venv"
+                    sh ". .venv/bin/activate")
+                }
+
                 echo 'Install testing dependency'
                 dir("${workspace}/Monitor") {
                     sh 'python -m pip install wheel nose coverage nosexcover pylint'
