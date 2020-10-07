@@ -60,7 +60,9 @@ pipeline {
                 }
 
                 git branch: "${env.BRANCH}", credentialsId: "${env.CREDENTIAL}", url: "${env.GIT_URL}"   // 使用 env 名称空间下的环境变量
-                shell("ls ${workspace}")
+                dir("${workspace}/Monitor") {
+                    shell("python3 -m venv .venv; . .venv/bin/activate")
+                }
             }
         }
 
