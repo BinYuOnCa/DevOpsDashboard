@@ -73,8 +73,8 @@ pipeline {
                 }
 
                 echo 'Install testing dependency'
-                dir("${workspace}/Monitor") {
-                    withPythonEnv('../.venv/bin/'){
+                withPythonEnv('.venv/bin/'){
+                    dir("${workspace}/Monitor") {
                         sh 'python -m pip install wheel nose coverage nosexcover pylint'
                         sh 'python -m pip install -r requirements.txt'
                         sh 'pip list'
