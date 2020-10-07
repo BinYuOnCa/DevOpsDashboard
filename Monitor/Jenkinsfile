@@ -70,18 +70,20 @@ pipeline {
                 echo 'Initial virtual environment'
                 dir("${workspace}") {
                     sh "python3 -m venv .venv"
-                    sh ". .venv/bin/activate"
                 }
 
                 echo 'Install testing dependency'
                 dir("${workspace}/Monitor") {
-                    sh 'python -m pip install wheel nose coverage nosexcover pylint'
-                    sh 'python -m pip install -r requirements.txt'
+                    withPythonEnv('../.venv/bin'){
+                        sh 'python -m pip install wheel nose coverage nosexcover pylint'
+                        sh 'python -m pip install -r requirements.txt'
+                        sh 'pip list'
+                    }
                 }
             }
         }
 
-        /**
+        /**ocker
          * Run coverage or regular unit test
          */
         stage('Testing') {
