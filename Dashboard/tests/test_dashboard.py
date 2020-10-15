@@ -1,9 +1,12 @@
 import unittest
 import asyncio
-from Dashboard.ui.services import commit_service
-from Dashboard.ui.plot import plot
+from ui.services import commit_service
+from ui.plot import plot
 
 
+"""
+Switch to "/h/to/DevOpsDashboard/Dashboard"
+"""
 class GithubTestCases(unittest.TestCase):
     loop = None
 
@@ -22,7 +25,7 @@ class GithubTestCases(unittest.TestCase):
             self.assertTrue(result.find("<?xml") == 0)   # svg
 
         import json
-        with open("test_data.json", 'r') as f:
+        with open("tests/test_data.json", 'r') as f:
             data = json.loads(f.read())
             commits, most_commits = commit_service.generate_commit_table(data)
 

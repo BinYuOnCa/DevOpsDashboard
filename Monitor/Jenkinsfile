@@ -70,26 +70,30 @@ pipeline {
                 echo 'Initial virtual environment'
                 dir("${workspace}") {
                     sh "python3 -m venv .venv"
-                    sh ". .venv/bin/activate"
                 }
 
                 echo 'Install testing dependency'
-                dir("${workspace}/Monitor") {
-                    sh 'python -m pip install wheel nose coverage nosexcover pylint'
-                    sh 'python -m pip install -r requirements.txt'
+                withPythonEnv("${workspace}/.venv/bin/"){
+                    dir("${workspace}/Monitor") {
+                        sh 'python -m pip install wheel nose coverage nosexcover pylint'
+                        sh 'python -m pip install -r requirements.txt'
+                        sh 'pip list'
+                    }
                 }
             }
         }
 
-        /**
+        /**ocker
          * Run coverage or regular unit test
          */
         stage('Testing') {
             steps {
                 echo 'Run test cases'
-                dir("${workspace}/Monitor") {
-                    // sh 'python setup.py test'
-                    sh 'nosetests -sv --with-xunit --xunit-file=nosetests.xml --with-xcoverage --xcoverage-file=coverage.xml'
+                withPythonEnv("${workspace}/.venv/bin/"){
+                    dir("${workspace}/Monitor") {
+                        // sh 'python setup.py test'
+                        sh 'nosetests -sv --with-xunit --xunit-file=nosetests.xml --with-xcoverage --xcoverage-file=coverage.xml'
+                    }
                 }
             }
         }
@@ -98,16 +102,34 @@ pipeline {
         /**
          * Call SonarQube scanner
          * It will load in coverage and other reports generated from previous step.
-         *
+         */
         stage('Sonar scan') {
             steps {
-                script {scannerHome=tool 'SonarQubeScanner'}
-                withSonarQubeEnv('SonarQube-Dev') {
-                    sh "${scannerHome}/bin/sonar-scanner"
+                withPythonEnv("${workspace}/.venv/bin/"){
+                    dir("${workspace}/Monitor") {
+                        script {scannerHome=tool 'SonarQube Scanner'}    // name is defined in `Global Tool Configuration`
+                        withSonarQubeEnv('MySonarQube') {                // name is defined in `Configure System`
+                            sh "${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=TestProject \
+                                -Dsonar.projectVersion=1.0 \
+                                -Dsonar.language=py \
+                                -Dsonar.tests=./tests \
+                                -Dsonar.exclusions=setup.py,**/__init__.py \
+                                -Dsonar.sourceEncoding=UTF-8 \
+                                -Dsonar.python.xunit.reportPath=nosetests.xml \
+                                -Dsonar.python.coverage.reportPaths=coverage.xml \
+                                -Dsonar.python.pylint=/usr/local/bin/pylint \
+                                -Dsonar.python.pylint_config=.pylintrc \
+                                -Dsonar.python.pylint.reportPath=pylint-report.txt"
+                        }
+                    }
+                }
+
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
-        */
 
         /**
          * Package
@@ -115,8 +137,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Build Monitor'
-                dir("${workspace}/Monitor") {
-                    sh 'python setup.py egg_info -bDEV bdist_wheel'
+                withPythonEnv("${workspace}/.venv/bin/"){
+                    dir("${workspace}/Monitor") {
+                        sh 'python setup.py egg_info -bDEV bdist_wheel'
+                    }
                 }
             }
         }

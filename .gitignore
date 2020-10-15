@@ -1,5 +1,6 @@
 .venv
 .idea
+.vscode
 *.iml
 __pycache__
 build
@@ -7,3 +8,4 @@ build
 dist
 *.sqlite3
 *.pyc
+*.code-workspace
