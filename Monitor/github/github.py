@@ -2,6 +2,10 @@ import asyncio
 import configparser
 import aiohttp
 import os, sys
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+cache = {}
 
 
 async def get_urls():
@@ -30,13 +34,26 @@ async def __get_config():
 async def get_commits(user, repo):
     url = (await get_urls()) + "/repos/%s/%s/commits" % (user, repo)
     http_client = aiohttp.ClientSession()
+
     try:
-        resp = await http_client.get(url, ssl=False)
-        if resp.status == 200:
-            body = await resp.json()
-            return body
-        else:
-            resp.raise_for_status()
-    finally:
-        await http_client.close()
+        http_proxy = os.environ['http_proxy']
+    except KeyError:
+        http_proxy = None
+
+    try:
+        _cache = cache[user][repo]
+        logging.debug('Read from cache.')
+        return _cache
+    except KeyError as e:
+        try:
+            resp = await http_client.get(url, ssl=False, proxy=http_proxy)
+            if resp.status == 200:
+                body = await resp.json()
+                cache[user] = {repo: body}
+                return body
+            else:
+                resp.raise_for_status()
+        finally:
+            await http_client.close()
+
 
