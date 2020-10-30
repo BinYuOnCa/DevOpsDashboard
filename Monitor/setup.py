@@ -17,10 +17,10 @@ def long_description():
         return f.read()
 
 
-# 安装 dependenices. 因为 bug 的原因, 需要将 url 分开处理，分别传给 `install_requires` 和 `dependency_links`
 def get_depends():
     with open('requirements.txt') as f:
         return f.read().splitlines()
+
 
 # 使用 unittest 测试框架
 import unittest
@@ -30,13 +30,6 @@ def get_test_suite():
     return test_suite
 
 
-# 可以在安装前检查依赖的版本，并自动升级到最新版(依赖必须发布到 pipy 中，否则会因为无法找到而出错)：
-# autoupgrade 0.2.0 之后才支持 master, 需要手工安装：pip install https://bitbucket.org/jorkar/autoupgrade/get/master.tar.gz --trusted-host=bitbucket.org
-# 或python -m pip install git+https://bitbucket.org/jorkar/autoupgrade.git@master#autoupgrade-0.2.0 --trusted-host=bitbucket.org
-#from autoupgrade import AutoUpgrade
-#AutoUpgrade("CodeRepositoryServices", index="https://localhost:9090/pypi").upgrade_if_needed()
-
-# 打包前执行 `git tag -a $(python setup.py --version)`　将 __version__ 注册为 tag number
 setup(
     author='Jeff Wang',
     author_email='jeffwji@test.com',
@@ -45,13 +38,7 @@ setup(
 
     # 命令行："python setup.py --version" 可以获得版本号。
     version=__version__,
-    #version_command='git describe --always --long --dirty=-dev',  # 3) 获得　tag 动态获得版本号(参考文档 <git release flow>)
-    # `--always` 如果没有打过标签会出现错误信息 `fatal: No names found, cannot describe anything.`，这个参数将返回 commit hash number 代替 tag 以避免错误.
-    # `--long --dirty=-dev` 获得长格式版本信息： <version>-<times>-<commit-hash>-<dirty> 例如：0.0.2-0-g00bd0b4-dev
-
-    ########
-    ## 数据文件打包规则
-    #
+    
     ### 指定或排除目录或模块：
     # find_package 想限制查找的访问，以下表示查找除了 tests 和 test 目录之外的所有其他目录下的项目文件。
     packages=find_packages(
@@ -75,13 +62,8 @@ setup(
     #
     # `package_data` 用于将`子模块/子目录`（注意必须是`子模块/子目录`，既不能用于项目根，也不能用于`子目录`，或`子目录/子目录`下的文件）下的非代码文件。
     # 它主要用于模块内部数据的打包，文件最终被安装到 `site` 目录下，可以通过访问模块路径取得。
-    #package_data={
-    #    # 模块（含有 __init__.py 文件）下的 conf 子目录下的任何包中含有 .properties 的文件。
-    #    'mymodule': ['conf/*.properties'],
-    #},
-    #include_package_data=True,
     #
-    # `data_files`（推荐）可以包含任意路径，包括根目录下的额外数据文件。它主要用于需要根据安装环境修改的文件，比如配置信息，因此不适合以模块的方式打包。
+    # `data_files` 可以包含任意路径，包括根目录下的额外数据文件。它主要用于需要根据安装环境修改的文件，比如配置信息适合以模块方式打包的
     data_files=[
         # 参数格式: (打包文件中的目录名称 , [源代码中的路径])。
         ('conf', ['conf/config.properties']),
@@ -105,6 +87,6 @@ setup(
 
     install_requires=get_depends(),
 
-    #
+    # python setup.py test
     test_suite='setup.get_test_suite',
 )
