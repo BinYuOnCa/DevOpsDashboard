@@ -4,7 +4,7 @@ pipeline {
      */
     agent {         // any
       node {        // 可选
-        label "Python3-Agent"
+        label "slave-python3"
       }
     }
 
