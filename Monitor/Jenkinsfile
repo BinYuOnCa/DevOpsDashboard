@@ -70,6 +70,9 @@ pipeline {
                 }
 
                 echo 'Install testing dependency'
+                /**
+                 * withPythonEnv 函数需要 Jenkins Pyenv plugin 支持
+                 */
                 withPythonEnv("${workspace}/.venv/bin/"){
                     dir("${workspace}/Monitor") {
                         sh 'pip install wheel nose coverage nosexcover pylint'
@@ -100,33 +103,33 @@ pipeline {
          * Call SonarQube scanner
          * It will load in coverage and other reports generated from previous step.
          */
-        stage('Sonar scan') {
-            steps {
-                withPythonEnv("${workspace}/.venv/bin/"){
-                    dir("${workspace}/Monitor") {
-                        script {scannerHome=tool 'SonarQube Scanner'}    // name is defined in `Global Tool Configuration`
-                        withSonarQubeEnv('MySonarQube') {                // name is defined in `Configure System`
-                            sh "${scannerHome}/bin/sonar-scanner \
-                                -Dsonar.projectKey=TestProject \
-                                -Dsonar.projectVersion=1.0 \
-                                -Dsonar.language=py \
-                                -Dsonar.tests=./tests \
-                                -Dsonar.exclusions=setup.py,**/__init__.py \
-                                -Dsonar.sourceEncoding=UTF-8 \
-                                -Dsonar.python.xunit.reportPath=nosetests.xml \
-                                -Dsonar.python.coverage.reportPaths=coverage.xml \
-                                -Dsonar.python.pylint=/usr/local/bin/pylint \
-                                -Dsonar.python.pylint_config=.pylintrc \
-                                -Dsonar.python.pylint.reportPath=pylint-report.txt"
-                        }
-                    }
-                }
-
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+        //stage('Sonar scan') {
+        //    steps {
+        //        withPythonEnv("${workspace}/.venv/bin/"){
+        //            dir("${workspace}/Monitor") {
+        //                script {scannerHome=tool 'SonarQube Scanner'}    // name is defined in `Global Tool Configuration`
+        //                withSonarQubeEnv('MySonarQube') {                // name is defined in `Configure System`
+        //                    sh '${scannerHome}/bin/sonar-scanner \
+        //                        -Dsonar.projectKey=TestProject \
+        //                        -Dsonar.projectVersion=1.0 \
+        //                        -Dsonar.language=py \
+        //                        -Dsonar.tests=./tests \
+        //                        -Dsonar.exclusions=setup.py,**/__init__.py \
+        //                        -Dsonar.sourceEncoding=UTF-8 \
+        //                        -Dsonar.python.xunit.reportPath=nosetests.xml \
+        //                        -Dsonar.python.coverage.reportPaths=coverage.xml \
+        //                        -Dsonar.python.pylint=/usr/local/bin/pylint \
+        //                        -Dsonar.python.pylint_config=.pylintrc \
+        //                        -Dsonar.python.pylint.reportPath=pylint-report.txt
+        //                }
+        //            }
+        //        }
+        //
+        //        timeout(time: 10, unit: 'MINUTES') {
+        //            waitForQualityGate abortPipeline: true
+        //        }
+        //    }
+        //}
 
         /**
          * Package
