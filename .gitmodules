@@ -1,0 +1,6 @@
+[submodule "Monitor"]
+	path = Monitor
+	url = https://github.com/jeffwji/Monitor.git
+[submodule "Dashboard"]
+	path = Dashboard
+	url = https://github.com/jeffwji/Dashboard.git
